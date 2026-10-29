@@ -42,7 +42,7 @@ export async function getAll(page, pageSize, order) {
       filteredBrands.sort((a, b) => {
         let isString = typeof a[property] === "string";
         if (isString) return a[property].localeCompare(b[property]) * direction;
-        return (a[property] - b[property]) * direction;
+        return ((a[property] || 0) - (b[property] || 0)) * direction;
       });
     }
 

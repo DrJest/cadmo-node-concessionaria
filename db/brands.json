@@ -112,7 +112,8 @@
   {
     "logo": "https://www.car-logos.org/wp-content/uploads/2011/09/dodge.png",
     "name": "Dodge",
-    "id": 23
+    "id": 23,
+    "foundation_year": 1914
   },
   {
     "logo": "https://www.car-logos.org/wp-content/uploads/2011/10/drmotor.png",
@@ -127,17 +128,20 @@
   {
     "logo": "https://www.car-logos.org/wp-content/uploads/2011/09/ferrari.png",
     "name": "Ferrari",
-    "id": 26
+    "id": 26,
+    "foundation_year": 1947
   },
   {
     "logo": "https://www.car-logos.org/wp-content/uploads/2011/09/fiat.png",
     "name": "Fiat",
-    "id": 27
+    "id": 27,
+    "foundation_year": 1899
   },
   {
     "logo": "https://www.car-logos.org/wp-content/uploads/2011/09/ford.png",
     "name": "Ford",
-    "id": 28
+    "id": 28,
+    "foundation_year": 1903
   },
   {
     "logo": "https://www.car-logos.org/wp-content/uploads/2011/09/gaz.png",
