@@ -13,6 +13,8 @@ config({
 });
 const app = express();
 
+app.use(express.json());
+
 app.get("/status", (_req, res) => {
   res.json({ status: "API is running" });
 });
