@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { countries } from "countries-list";
 import { Router } from "express";
+import { getAll } from "../services/brand.service.js";
 
 export const Brand = z.object({
   id: z.int().gt(0),
@@ -13,8 +14,17 @@ export const Brand = z.object({
 
 export const router = Router();
 
-router.get("/", (req, res) => {
-  res.send([]);
+router.get("/", async (req, res) => {
+  const { page, pageSize, order } = req.query;
+  try {
+    const data = await getAll(page, pageSize, order);
+    res.json(data);
+  }
+  catch(e) {
+    res.status(400).json({
+      error: e.getMessage()
+    })
+  }
 });
 
 export default router;
