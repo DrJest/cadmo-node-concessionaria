@@ -7,8 +7,10 @@ const FILE = join(import.meta.dirname, "..", "db", "brands.json");
 // returns { data: Brand[], total: number, page: number, pageSize: number, totalPages: number }
 export async function getAll(page, pageSize, order) {
   // tutti i brand, eventualmente paginati
-  if (!page) page = 1;
-  if (!pageSize) pageSize = 10;
+  page = Number(page);
+  pageSize = Number(pageSize);
+  if (!page || Number.isNaN(page)) page = 1;
+  if (!pageSize || Number.isNaN(pageSize)) pageSize = 10;
   if (pageSize <= 0) {
     throw new Error("pageSize non può essere minore di 1");
   }
