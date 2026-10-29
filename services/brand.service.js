@@ -58,7 +58,7 @@ export async function getAll(page, pageSize, order) {
       total: filteredBrands.length,
       page,
       pageSize,
-      totalPages: Math.ceil(total / pageSize),
+      totalPages: Math.ceil(filteredBrands.length / pageSize),
     };
   } catch (e) {
     console.error(e);
