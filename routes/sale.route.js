@@ -7,7 +7,7 @@ export const Sale = z.object({
   customer: z.string().min(1),
   model: Model,
   date: z.date(),
-  price: z.number()
+  price: z.number(),
 });
 
 export const router = Router();
