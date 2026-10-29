@@ -44,15 +44,6 @@ export async function getAll(page, pageSize, order) {
       });
     }
 
-    if (pageSize === -1) {
-      return {
-        data: filteredBrands,
-        total: filteredBrands.length,
-        page: 1,
-        pageSize: filteredBrands.length,
-        totalPages: 1,
-      }; // può essere pericoloso se il DB è grande
-    }
     return {
       data: filteredBrands.slice((page - 1) * pageSize, page * pageSize),
       total: filteredBrands.length,
