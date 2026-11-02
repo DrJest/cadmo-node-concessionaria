@@ -1,0 +1,15 @@
+[
+  {
+    "name": "Grande Punto",
+    "available_colors": [
+      "white",
+      "black"
+    ],
+    "year": 2000,
+    "price": 10000,
+    "brand": {
+      "id": 27
+    },
+    "id": 1
+  }
+]

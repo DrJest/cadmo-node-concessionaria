@@ -574,5 +574,12 @@
     "logo": "https://www.car-logos.org/wp-content/uploads/2022/08/zil.png",
     "name": "Zil",
     "id": 114
+  },
+  {
+    "name": "BYD",
+    "logo": "https://www.byd.com/",
+    "country": "China",
+    "foundation_year": 1995,
+    "id": 115
   }
 ]
