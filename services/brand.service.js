@@ -123,6 +123,15 @@ export async function del(id) {
   if (!brand) {
     throw new HttpError(404, "Brand non trovato");
   }
+  const modelService = await import("./model.service.js");
+
+  const models = await modelService.find(1, 1000, "id", { brand: id });
+  if (models.length) {
+    throw new HttpError(
+      409,
+      "Non è possibile eliminare un Brand con modelli esistenti",
+    );
+  }
   await dbService.delete(id);
 }
 
