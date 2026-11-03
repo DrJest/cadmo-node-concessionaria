@@ -8,7 +8,7 @@ export const Sale = z.object({
   id: z.int().gt(0),
   customer: z.string().min(1),
   model: Model,
-  date: z.date(),
+  date: z.date().default(new Date()),
   price: z.number(),
 });
 
@@ -45,7 +45,17 @@ export async function find(page, pageSize, order, q) {
   } catch (e) {
     q = null;
   }
-
+  if (q && q.customer) {
+    filteredSales = filteredSales.filter((el) =>
+      el.customer.toLowerCase().includes(q.customer.toLowerCase()),
+    );
+  }
+  if (q && q.date) {
+    filteredSales = filteredSales.filter((el) => el.date === q.date);
+  }
+  if (q && q.model && q.model.id) {
+    filteredSales = filteredSales.filter((el) => el.model.id === q.model.id);
+  }
   if (order) {
     // i valori consentiti sono le proprietà di "Sale"
     // con un - davanti si intende in ordine inverso
@@ -83,6 +93,9 @@ export async function get(id) {
 // body: Partial<Sale>
 // return Sale | throws HttpError
 export async function create(body) {
+  if (body.date && typeof body.date === "string") {
+    body.date = new Date(body.date);
+  }
   const validation = await z.validateAsync(CreateSaleSchema, body);
   if (!validation) {
     throw new HttpError(400, "body non valido");
@@ -101,6 +114,9 @@ export async function edit(id, body) {
   const el = await dbService.findOne(id);
   if (!el) {
     throw new HttpError(404, "Sale non trovato");
+  }
+  if (body.date && typeof body.date === "string") {
+    body.date = new Date(body.date);
   }
   const validation = await z.validateAsync(UpdateSaleSchema, body);
   if (!validation) {

@@ -125,7 +125,7 @@ export async function del(id) {
   }
   const modelService = await import("./model.service.js");
 
-  const models = await modelService.find(1, 1000, "id", { brand: id });
+  const models = await modelService.find(1, 1, "id", { brand: id });
   if (models.length) {
     throw new HttpError(
       409,
@@ -135,6 +135,23 @@ export async function del(id) {
   await dbService.delete(id);
 }
 
+export async function getWithModels(id) {
+  id = Number(id);
+  if (Number.isNaN(id) || id < 0) {
+    throw new HttpError(400, "ID non valido");
+  }
+  const brand = await dbService.findOne(id);
+  if (!brand) {
+    throw new HttpError(404, "Brand not found");
+  }
+  const modelService = await import("./model.service.js");
+  const models = await modelService.find(1, 1000, "id", { brand: id });
+  return {
+    ...brand,
+    models,
+  };
+}
+
 export default {
   version: "v1",
   get,
@@ -142,4 +159,5 @@ export default {
   find,
   edit,
   delete: del,
+  getWithModels,
 };

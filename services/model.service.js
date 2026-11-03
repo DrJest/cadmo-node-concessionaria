@@ -138,6 +138,25 @@ export async function del(id) {
   await dbService.delete(id);
 }
 
+export async function getWithSales(id, page, pageSize, order) {
+  id = Number(id);
+  if (Number.isNaN(id) || id < 0) {
+    throw new HttpError(400, "ID non valido");
+  }
+  const el = await dbService.findOne(id);
+  if (!el) {
+    throw new HttpError(404, "Model not found");
+  }
+  const saleService = await import("./sale.service.js");
+  const sales = await saleService.find(page, pageSize, order, {
+    model: { id },
+  });
+  return {
+    ...el,
+    sales,
+  };
+}
+
 export default {
   version: "v1",
   get,
@@ -145,4 +164,5 @@ export default {
   find,
   edit,
   delete: del,
+  getWithSales,
 };

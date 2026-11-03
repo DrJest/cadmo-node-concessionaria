@@ -1,6 +1,13 @@
 import { Router } from "express";
 import { HttpError } from "../lib/http-error.js";
-import { create, del, edit, find, get } from "../services/model.service.js";
+import {
+  create,
+  del,
+  edit,
+  find,
+  get,
+  getWithSales,
+} from "../services/model.service.js";
 
 export const router = Router();
 
@@ -17,6 +24,13 @@ router.get("/:id", async (req, res) => {
     throw new HttpError(404, "not found");
   }
   res.json(element);
+});
+
+router.get("/:id/sales", async (req, res) => {
+  const { id } = req.params;
+  const { page, pageSize, order } = req.query;
+  const sales = await getWithSales(id, page, pageSize, order);
+  res.json(sales);
 });
 
 router.post("/", async (req, res) => {

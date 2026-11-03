@@ -1,8 +1,13 @@
 import { Router } from "express";
 import { HttpError } from "../lib/http-error.js";
-import { create, del, edit, find, get } from "../services/brand.service.js";
-
-import modelService from "../services/model.service.js";
+import {
+  create,
+  del,
+  edit,
+  find,
+  get,
+  getWithModels,
+} from "../services/brand.service.js";
 
 export const router = Router();
 
@@ -23,15 +28,11 @@ router.get("/:id", async (req, res) => {
 
 router.get("/:id/models", async (req, res) => {
   const { id } = req.params;
-  const brand = await get(id);
+  const brand = await getWithModels(id);
   if (!brand) {
     throw new HttpError(404, "not found");
   }
-  const models = await modelService.find(1, 1000, "id", { brand: id });
-  res.status(200).json({
-    ...brand,
-    models: models.data,
-  });
+  res.status(200).json(brand);
 });
 
 router.post("/", async (req, res) => {
