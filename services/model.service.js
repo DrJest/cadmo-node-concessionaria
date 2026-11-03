@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { z } from "zod";
 import { HttpError } from "../lib/http-error.js";
 import { JsonDbService } from "../lib/json-db.js";
-import { Brand } from "./brand.service.js";
+import brandService, { Brand } from "./brand.service.js";
 
 export const Model = z.object({
   id: z.int().gt(0),
@@ -76,6 +76,13 @@ export async function find(page, pageSize, order, q) {
       if (isString) return a[property].localeCompare(b[property]) * direction;
       return ((a[property] || 0) - (b[property] || 0)) * direction;
     });
+  }
+
+  for(let model of filteredModels) {
+    if(model.brand && model.brand.id) {
+      let b = await brandService.get(model.brand.id);
+      model.brand = b;
+    }
   }
 
   return {

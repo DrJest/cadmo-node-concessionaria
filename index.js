@@ -3,6 +3,7 @@ import express from "express";
 import path, { join } from "node:path";
 
 import { HttpError } from "./lib/http-error.js";
+import authRoute from "./routes/auth.route.js";
 import brandRoute from "./routes/brand.route.js";
 import { router as modelRoute } from "./routes/model.route.js";
 import saleRoute from "./routes/sale.route.js";
@@ -22,6 +23,7 @@ app.use("/api/", express.json());
 app.get("/api/v1/status", (_req, res) => {
   res.json({ status: "API is running" });
 });
+app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/brands", brandRoute);
 app.use("/api/v1/models", modelRoute);
 app.use("/api/v1/sales", saleRoute);

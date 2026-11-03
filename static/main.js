@@ -52,7 +52,7 @@ const routes = {
       { label: "Anno", value: (row) => row.year },
       { label: "Colori", value: (row) => row.available_colors?.join(", ") },
       { label: "Prezzo", value: (row) => formatPrice(row.price) },
-      { label: "Brand", value: (row) => row.brand?.id },
+      { label: "Brand", value: (row) => row.brand?.name },
     ],
   },
   sales: {
@@ -60,7 +60,7 @@ const routes = {
     columns: [
       { label: "ID", value: (row) => row.id },
       { label: "Cliente", value: (row) => row.customer },
-      { label: "Modello", value: (row) => row.model?.id },
+      { label: "Modello", value: (row) => row.model?.name },
       { label: "Data", value: (row) => formatDate(row.date) },
       { label: "Prezzo", value: (row) => formatPrice(row.price) },
     ],

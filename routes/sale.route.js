@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import { HttpError } from "../lib/http-error.js";
 import { create, del, edit, find, get } from "../services/sale.service.js";
+import { checkToken } from "../services/auth.service.js";
 
 export const router = Router();
 
@@ -20,7 +21,7 @@ router.get("/:id", async (req, res) => {
   res.json(element);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", checkToken, async (req, res) => {
   const body = req.body;
   const newelement = await create(body);
   res.setHeader("Location", req.originalUrl + newelement.id);

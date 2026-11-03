@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { z } from "zod";
 import { HttpError } from "../lib/http-error.js";
 import { JsonDbService } from "../lib/json-db.js";
-import { Model } from "./model.service.js";
+import modelService, { Model } from "./model.service.js";
 
 export const Sale = z.object({
   id: z.int().gt(0),
@@ -71,6 +71,13 @@ export async function find(page, pageSize, order, q) {
       if (isString) return a[property].localeCompare(b[property]) * direction;
       return ((a[property] || 0) - (b[property] || 0)) * direction;
     });
+  }
+
+  for (let sale of filteredSales) {
+    if (sale.model && sale.model.id) {
+      let b = await modelService.get(sale.model.id);
+      sale.model = b;
+    }
   }
 
   return {
