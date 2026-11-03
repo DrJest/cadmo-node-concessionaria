@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { HttpError } from "./lib/http-error.js";
 import brandRoute from "./routes/brand.route.js";
 import { router as modelRoute } from "./routes/model.route.js";
+import saleRoute from "./routes/sale.route.js";
 
 const __dirname = import.meta.dirname;
 
@@ -22,6 +23,7 @@ app.get("/status", (_req, res) => {
 
 app.use("/api/v1/brands", brandRoute);
 app.use("/api/v1/models", modelRoute);
+app.use("/api/v1/sales", saleRoute);
 
 app.use((err, _req, res, _next) => {
   console.error(err);
