@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 import express from "express";
-import { join } from "node:path";
+import path, { join } from "node:path";
 
 import { HttpError } from "./lib/http-error.js";
 import brandRoute from "./routes/brand.route.js";
@@ -15,12 +15,13 @@ config({
 });
 const app = express();
 
-app.use(express.json());
+app.use(express.static(path.join(__dirname, "static")));
 
-app.get("/status", (_req, res) => {
+app.use("/api/", express.json());
+
+app.get("/api/v1/status", (_req, res) => {
   res.json({ status: "API is running" });
 });
-
 app.use("/api/v1/brands", brandRoute);
 app.use("/api/v1/models", modelRoute);
 app.use("/api/v1/sales", saleRoute);
