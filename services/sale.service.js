@@ -14,7 +14,7 @@ export const Sale = z.object({
 
 export const CreateSaleSchema = Sale.omit({ id: true })
   .extend({
-    brand: Brand.pick({ id: true }),
+    model: Model.pick({ id: true }),
   })
   .strict();
 
