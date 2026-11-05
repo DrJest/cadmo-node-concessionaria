@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 import express from "express";
-import path, { join } from "node:path";
+import { join } from "node:path";
 
 import { HttpError } from "./lib/http-error.js";
 import authRoute from "./routes/auth.route.js";
@@ -16,7 +16,23 @@ config({
 });
 const app = express();
 
-app.use(express.static(path.join(__dirname, "static")));
+app.use(express.static(join(__dirname, "static")));
+
+app.set("views", join(__dirname, "views"));
+app.set("view engine", "ejs");
+
+app.locals.name = "Global";
+
+app.get("/brands", async (req, res) => {
+  const { page, pageSize, order, name } = req.query;
+  const brandService = await import("./services/brand.service.js");
+  const q = {};
+  if (name) {
+    q.name = name;
+  }
+  const data = await brandService.find(page, pageSize, order, JSON.stringify(q));
+  res.render("brands", data);
+});
 
 app.use("/api/", express.json());
 

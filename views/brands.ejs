@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul>
+      <% for(brand of data) { -%>
+        <li><%= brand.name -%></li>
+      <% } -%>
+    </ul>
+    <hr />
+    <% for(i = 1; i <= totalPages; i++) { %>
+      <% if (i === page) { -%>
+        <%= i %>
+      <% } else { -%>
+        <a href="?page=<%= i -%>"><%= i -%></a>
+      <% } -%>
+    <% } -%>
+    <hr />
+    <form action="" method="get">
+      <input name="name" placeholder="name">
+      <input type="submit" value="Cerca">
+    </form>
+  </body>
+</html>
