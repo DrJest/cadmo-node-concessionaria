@@ -1,0 +1,32 @@
+CREATE TABLE IF NOT EXISTS brands (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  logo TEXT NOT NULL,
+  country TEXT NOT NULL,
+  foundation_year INTEGER NOT NULL,
+  luxury INTEGER DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS models (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  available_colors TEXT NOT NULL,
+  year INTEGER NOT NULL,
+  price REAL NOT NULL,
+  brand_id INTEGER NOT NULL REFERENCES brands(id)
+);
+
+CREATE TABLE IF NOT EXISTS sales (
+  id INTEGER PRIMARY KEY,
+  customer TEXT NOT NULL,
+  model_id INTEGER NOT NULL REFERENCES models(id),
+  date TEXT NOT NULL,
+  price REAL NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS users (
+  name TEXT NOT NULL,
+  username TEXT PRIMARY KEY,
+  password TEXT NOT NULL,
+  registrationDate TEXT NOT NULL
+);

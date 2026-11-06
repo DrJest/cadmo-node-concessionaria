@@ -23,7 +23,7 @@ export const login = async (username, password) => {
   const validateUsername = z.validate(UsernameSchema, username);
   if (!validateUsername) throw new HttpError(401, "Username not valid");
   const users = await dbService.find();
-  let user = users.find((u) => u.username === username);
+  let user = users((u) => u.username === username);
   if (!user) throw new HttpError(401, "user not found");
   const p = createHash("sha256").update(password).digest("base64");
   if (user.password !== p) throw new HttpError(401, "password wrong");
@@ -78,7 +78,6 @@ export const checkToken = async (req, res, next) => {
   } catch (err) {
     throw new HttpError(401, "token non valido");
   }
-  console.log(payload);
   const user = await dbService.findOne(payload.id);
   req.user = user;
   delete req.user.password;

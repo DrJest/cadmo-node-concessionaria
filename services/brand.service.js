@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { z } from "zod";
 import { HttpError } from "../lib/http-error.js";
 import { JsonDbService } from "../lib/json-db.js";
+import { SqliteDbService } from "../lib/sqlite-db.js";
 
 export const Brand = z.object({
   id: z.int().gt(0),
@@ -17,10 +18,9 @@ export const CreateBrandSchema = Brand.omit({ id: true }).strict();
 
 export const UpdateBrandSchema = Brand.omit({ id: true }).partial().strict();
 
-const FILE = join(import.meta.dirname, "..", "db", "brands.json");
-const dbService = new JsonDbService(FILE);
-//const FILE = join(import.meta.dirname, "..", "db", "brands.csv");
-//const dbService = new CsvDbService(FILE);
+const dbService = new SqliteDbService("brands");
+//const FILE = join(import.meta.dirname, "..", "db", "brands.json");
+//const dbService = new JsonDbService(FILE);
 
 // returns { data: Brand[], total: number, page: number, pageSize: number, totalPages: number }
 export async function find(page, pageSize, order, q) {
@@ -32,47 +32,36 @@ export async function find(page, pageSize, order, q) {
     throw new HttpError(400, "pageSize non può essere minore di 1");
   }
 
-  const brands = await dbService.find();
-  let filteredBrands = [...brands];
-  try {
-    q = JSON.parse(q);
-  } catch (e) {
-    q = null;
-  }
-  if (q && q.name) {
-    filteredBrands = filteredBrands.filter((el) =>
-      el.name.toLowerCase().includes(q.name.toLowerCase()),
-    );
-  }
-  if (q && q.year) {
-    filteredBrands = filteredBrands.filter(
-      (el) => el.foundation_year === Number(q.year),
-    );
-  }
   if (order) {
-    // i valori consentiti sono le proprietà di "Brand"
-    // con un - davanti si intende in ordine inverso
-    // es: "id" -> ID crescente, "-name" -> nome decrescente
     const property = order.replace(/^-/, "");
     const direction = order[0] === "-" ? -1 : 1;
     const validProperty = property in Brand.shape;
     if (!validProperty) {
       throw new HttpError(400, "order deve essere una proprietà di Brand");
     }
-    filteredBrands.sort((a, b) => {
-      let isString = typeof a[property] === "string";
-      if (isString) return a[property].localeCompare(b[property]) * direction;
-      return ((a[property] || 0) - (b[property] || 0)) * direction;
-    });
+    order = { property, direction };
+  } else {
+    order = { property: "id", direction: 1 };
   }
 
-  return {
-    data: filteredBrands.slice((page - 1) * pageSize, page * pageSize),
-    total: filteredBrands.length,
-    page,
-    pageSize,
-    totalPages: Math.ceil(filteredBrands.length / pageSize),
-  };
+  try {
+    q = JSON.parse(q);
+  } catch (e) {
+    q = {};
+  }
+
+  for (let prop in q) {
+    if (!(prop in Brand.shape)) {
+      throw new HttpError(
+        400,
+        "i parametri di ricerca devono essere proprietà di Brand",
+      );
+    }
+  }
+
+  const brands = await dbService.find(page, pageSize, order, q);
+
+  return brands;
 }
 
 // returns Brand | null

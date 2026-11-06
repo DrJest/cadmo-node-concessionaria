@@ -41,26 +41,6 @@ export async function find(page, pageSize, order, q) {
     throw new HttpError(400, "pageSize non può essere minore di 1");
   }
 
-  const models = await dbService.find();
-  let filteredModels = [...models];
-  try {
-    q = JSON.parse(q);
-  } catch (e) {
-    q = null;
-  }
-  if (q && q.name) {
-    filteredModels = filteredModels.filter((el) =>
-      el.name.toLowerCase().includes(q.name.toLowerCase()),
-    );
-  }
-  if (q && q.year) {
-    filteredModels = filteredModels.filter((el) => el.year === Number(q.year));
-  }
-  if (q && q.brand) {
-    filteredModels = filteredModels.filter(
-      (el) => el.brand?.id === Number(q.brand),
-    );
-  }
   if (order) {
     // i valori consentiti sono le proprietà di "Model"
     // con un - davanti si intende in ordine inverso
@@ -71,27 +51,36 @@ export async function find(page, pageSize, order, q) {
     if (!validProperty) {
       throw new HttpError(400, "order deve essere una proprietà di Model");
     }
-    filteredModels.sort((a, b) => {
-      let isString = typeof a[property] === "string";
-      if (isString) return a[property].localeCompare(b[property]) * direction;
-      return ((a[property] || 0) - (b[property] || 0)) * direction;
-    });
+    order = { property, direction };
+  } else {
+    order = { property: "id", direction: 1 };
   }
 
-  for(let model of filteredModels) {
-    if(model.brand && model.brand.id) {
+  try {
+    q = JSON.parse(q);
+  } catch (e) {
+    q = {};
+  }
+
+  for (let prop in q) {
+    if (!(prop in Brand.shape)) {
+      throw new HttpError(
+        400,
+        "i parametri di ricerca devono essere proprietà di Brand",
+      );
+    }
+  }
+
+  const models = await dbService.find(page, pageSize, order, q);
+
+  for (let model of models.data) {
+    if (model.brand && model.brand.id) {
       let b = await brandService.get(model.brand.id);
       model.brand = b;
     }
   }
 
-  return {
-    data: filteredModels.slice((page - 1) * pageSize, page * pageSize),
-    total: filteredModels.length,
-    page,
-    pageSize,
-    totalPages: Math.ceil(filteredModels.length / pageSize),
-  };
+  return models;
 }
 
 // returns Model | null
