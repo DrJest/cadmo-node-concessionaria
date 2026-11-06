@@ -581,5 +581,13 @@
     "country": "China",
     "foundation_year": 1995,
     "id": 115
+  },
+  {
+    "name": "CadmoMotors",
+    "logo": "https://www.itscadmo.it/assets/logo-cadmo-su-scuro--vurP9EE.svg",
+    "country": "Italy",
+    "foundation_year": 2025,
+    "luxury": true,
+    "id": 116
   }
 ]

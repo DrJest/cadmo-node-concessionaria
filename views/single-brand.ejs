@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <p>
+      Name: <%= brand.name %> <br />
+      Logo: <img src="<%= brand.logo %>"><br />
+      Country: <%= brand.country %> <br />
+      Foundation: <%= brand.foundation_year %><br />
+      <% if(brand.luxury) { %> DE LUSSO <% } %>
+    </p>
+
+    <% if(locals.loggedIn) { %>
+      <a href="/brands/<%= brand.id %>/edit">Modifica</a>
+    <% } %>
+  </body>
+</html>

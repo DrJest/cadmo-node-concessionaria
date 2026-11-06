@@ -1,0 +1,19 @@
+<html>
+  <body>
+    <form method="POST" action="">
+      <input name="name" placeholder="name" value="<%= brand.name %>"> <br />
+      <input name="logo" placeholder="logo" value="<%= brand.logo %>"> <br />
+      <select name="country">
+        <% for (let c of countries) { %>
+          <option value="<%= c.name %>" <% if(c.name === brand.country) { %>selected<% } %>><%= c.name %></option>
+        <% } %>
+      </select> <br />
+      <input type="number" name="foundation_year" placeholder="foundation_year" value="<%= brand.foundation_year %>"> <br />
+      <label>
+        <input type="checkbox" name="luxury" <% if(brand.luxury) { %>checked<% } %>>
+        Luxury
+      </label> <br />
+      <input type="submit" value="Salva">
+    </form>
+  </body>
+</html>

@@ -3,6 +3,9 @@ import express from "express";
 import { join } from "node:path";
 
 import { HttpError } from "./lib/http-error.js";
+
+import ejsBrandRoute from "./routes/ejs/brand.route.js";
+
 import authRoute from "./routes/auth.route.js";
 import brandRoute from "./routes/brand.route.js";
 import { router as modelRoute } from "./routes/model.route.js";
@@ -17,22 +20,18 @@ config({
 const app = express();
 
 app.use(express.static(join(__dirname, "static")));
+app.use(
+  express.urlencoded({
+    extended: true,
+  }),
+);
 
 app.set("views", join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 app.locals.name = "Global";
 
-app.get("/brands", async (req, res) => {
-  const { page, pageSize, order, name } = req.query;
-  const brandService = await import("./services/brand.service.js");
-  const q = {};
-  if (name) {
-    q.name = name;
-  }
-  const data = await brandService.find(page, pageSize, order, JSON.stringify(q));
-  res.render("brands", data);
-});
+app.use("/brands", ejsBrandRoute);
 
 app.use("/api/", express.json());
 
