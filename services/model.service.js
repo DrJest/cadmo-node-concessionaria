@@ -1,10 +1,10 @@
-import { join } from "node:path";
 import { z } from "zod";
 import { HttpError } from "../lib/http-error.js";
-import { JsonDbService } from "../lib/json-db.js";
-import brandService, { Brand } from "./brand.service.js";
+//import { JsonDbService } from "../lib/json-db.js";
+import { TypeOrmDbService } from "../lib/typeorm-db.js";
+import brandService, { BrandSchema } from "./brand.service.js";
 
-export const Model = z.object({
+export const ModelSchema = z.object({
   id: z.int().gt(0),
   name: z.string().min(1),
   available_colors: z.array(
@@ -12,24 +12,25 @@ export const Model = z.object({
   ),
   year: z.int().gt(1800).lte(new Date().getFullYear()),
   price: z.number(),
-  brand: Brand,
+  brand: BrandSchema,
 });
 
-export const CreateModelSchema = Model.omit({ id: true })
+export const CreateModelSchema = ModelSchema.omit({ id: true })
   .extend({
-    brand: Brand.pick({ id: true }),
+    brand: BrandSchema.pick({ id: true }),
   })
   .strict();
 
-export const UpdateModelSchema = Model.omit({ id: true })
+export const UpdateModelSchema = ModelSchema.omit({ id: true })
   .extend({
-    brand: Brand.pick({ id: true }),
+    brand: BrandSchema.pick({ id: true }),
   })
   .partial()
   .strict();
 
-const FILE = join(import.meta.dirname, "..", "db", "models.json");
-const dbService = new JsonDbService(FILE);
+//const FILE = join(import.meta.dirname, "..", "db", "models.json");
+//const dbService = new JsonDbService(FILE);
+const dbService = new TypeOrmDbService("Model");
 
 // returns { data: Model[], total: number, page: number, pageSize: number, totalPages: number }
 export async function find(page, pageSize, order, q) {
@@ -47,7 +48,7 @@ export async function find(page, pageSize, order, q) {
     // es: "id" -> ID crescente, "-name" -> nome decrescente
     const property = order.replace(/^-/, "");
     const direction = order[0] === "-" ? -1 : 1;
-    const validProperty = property in Model.shape;
+    const validProperty = property in ModelSchema.shape;
     if (!validProperty) {
       throw new HttpError(400, "order deve essere una proprietà di Model");
     }
@@ -63,7 +64,7 @@ export async function find(page, pageSize, order, q) {
   }
 
   for (let prop in q) {
-    if (!(prop in Brand.shape)) {
+    if (!(prop in BrandSchema.shape)) {
       throw new HttpError(
         400,
         "i parametri di ricerca devono essere proprietà di Brand",
@@ -73,12 +74,14 @@ export async function find(page, pageSize, order, q) {
 
   const models = await dbService.find(page, pageSize, order, q);
 
+  /*
   for (let model of models.data) {
     if (model.brand && model.brand.id) {
       let b = await brandService.get(model.brand.id);
       model.brand = b;
     }
   }
+    */
 
   return models;
 }

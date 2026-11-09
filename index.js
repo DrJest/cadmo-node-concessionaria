@@ -6,6 +6,7 @@ import { HttpError } from "./lib/http-error.js";
 
 import ejsBrandRoute from "./routes/ejs/brand.route.js";
 
+import AppDataSource from "./config/typeorm.js";
 import authRoute from "./routes/auth.route.js";
 import brandRoute from "./routes/brand.route.js";
 import { router as modelRoute } from "./routes/model.route.js";
@@ -54,6 +55,13 @@ app.use((err, _req, res, _next) => {
     error: err.message,
   });
 });
+
+try {
+  await AppDataSource.initialize();
+} catch (err) {
+  console.error(err);
+  process.exit(1);
+}
 
 const PORT = process.env.PORT ?? 3000;
 app.listen(PORT, () => {

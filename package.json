@@ -13,6 +13,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "better-sqlite3": "^12.11.1",
     "cors": "^2.8.6",
     "countries-list": "^3.4.1",
     "dotenv": "^18.0.9",
@@ -21,6 +22,7 @@
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.12.1",
     "multer": "^2.5.0",
+    "typeorm": "^1.1.2",
     "zod": "^4.6.7"
   }
 }

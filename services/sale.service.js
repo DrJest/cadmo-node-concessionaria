@@ -2,25 +2,25 @@ import { join } from "node:path";
 import { z } from "zod";
 import { HttpError } from "../lib/http-error.js";
 import { JsonDbService } from "../lib/json-db.js";
-import modelService, { Model } from "./model.service.js";
+import modelService, { ModelSchema } from "./model.service.js";
 
-export const Sale = z.object({
+export const SaleSchema = z.object({
   id: z.int().gt(0),
   customer: z.string().min(1),
-  model: Model,
+  model: ModelSchema,
   date: z.date().default(new Date()),
   price: z.number(),
 });
 
-export const CreateSaleSchema = Sale.omit({ id: true })
+export const CreateSaleSchema = SaleSchema.omit({ id: true })
   .extend({
-    model: Model.pick({ id: true }),
+    model: ModelSchema.pick({ id: true }),
   })
   .strict();
 
-export const UpdateSaleSchema = Sale.omit({ id: true })
+export const UpdateSaleSchema = SaleSchema.omit({ id: true })
   .extend({
-    model: Model.pick({ id: true }),
+    model: ModelSchema.pick({ id: true }),
   })
   .partial()
   .strict();
@@ -62,7 +62,7 @@ export async function find(page, pageSize, order, q) {
     // es: "id" -> ID crescente, "-name" -> nome decrescente
     const property = order.replace(/^-/, "");
     const direction = order[0] === "-" ? -1 : 1;
-    const validProperty = property in Sale.shape;
+    const validProperty = property in SaleSchema.shape;
     if (!validProperty) {
       throw new HttpError(400, "order deve essere una proprietà di Sale");
     }

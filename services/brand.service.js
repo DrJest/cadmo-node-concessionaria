@@ -4,8 +4,9 @@ import { z } from "zod";
 import { HttpError } from "../lib/http-error.js";
 import { JsonDbService } from "../lib/json-db.js";
 import { SqliteDbService } from "../lib/sqlite-db.js";
+import { TypeOrmDbService } from "../lib/typeorm-db.js";
 
-export const Brand = z.object({
+export const BrandSchema = z.object({
   id: z.int().gt(0),
   name: z.string().min(1).max(20),
   logo: z.url(),
@@ -14,11 +15,14 @@ export const Brand = z.object({
   luxury: z.boolean().optional(),
 });
 
-export const CreateBrandSchema = Brand.omit({ id: true }).strict();
+export const CreateBrandSchema = BrandSchema.omit({ id: true }).strict();
 
-export const UpdateBrandSchema = Brand.omit({ id: true }).partial().strict();
+export const UpdateBrandSchema = BrandSchema.omit({ id: true })
+  .partial()
+  .strict();
 
-const dbService = new SqliteDbService("brands");
+//const dbService = new SqliteDbService("brands");
+const dbService = new TypeOrmDbService("Brand");
 //const FILE = join(import.meta.dirname, "..", "db", "brands.json");
 //const dbService = new JsonDbService(FILE);
 
@@ -35,7 +39,7 @@ export async function find(page, pageSize, order, q) {
   if (order) {
     const property = order.replace(/^-/, "");
     const direction = order[0] === "-" ? -1 : 1;
-    const validProperty = property in Brand.shape;
+    const validProperty = property in BrandSchema.shape;
     if (!validProperty) {
       throw new HttpError(400, "order deve essere una proprietà di Brand");
     }
@@ -51,7 +55,7 @@ export async function find(page, pageSize, order, q) {
   }
 
   for (let prop in q) {
-    if (!(prop in Brand.shape)) {
+    if (!(prop in BrandSchema.shape)) {
       throw new HttpError(
         400,
         "i parametri di ricerca devono essere proprietà di Brand",
